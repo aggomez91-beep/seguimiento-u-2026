@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Panel no oficial de seguimiento de Universidad de Chile 2026">
+  <meta name="theme-color" content="#020817">
+  <title>Universidad de Chile | Tracker 2026</title>
+  <style>
+    :root {
+      --blue: #0867df;
+      --cyan: #22d3ee;
+      --red: #e81d35;
+      --navy: #020817;
+      --text: #f8fafc;
+      --muted: #a8b4ca;
+      --line: rgba(255,255,255,.16);
+      --card: rgba(3,13,35,.50);
+      --shadow: 0 24px 72px rgba(0,15,50,.34);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--navy);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIoNnE2iJz4EfNVOOOuiAkj3up7QRn11uS_DDcUl9kH5EWo3IfN_fgJU4&s=10") center/cover fixed no-repeat;
+      transform: scale(1.03);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        linear-gradient(180deg, rgba(2,8,23,.27), rgba(2,8,23,.60)),
+        radial-gradient(circle at 15% 5%, rgba(8,103,223,.18), transparent 38%);
+    }
+
+    button, input, select { font: inherit; }
+    button { color: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(2,8,23,.68);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .topbar-inner, .container {
+      width: min(1400px, calc(100% - 32px));
+      margin: auto;
+    }
+
+    .topbar-inner {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 54px;
+      height: 62px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 13px rgba(32,145,255,.68));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float { 50% { transform: translateY(-4px); } }
+
+    .brand { min-width: 0; }
+    .brand strong { font-size: 18px; letter-spacing: .02em; }
+    .brand small { display: block; margin-top: 4px; color: var(--muted); }
+
+    .main-nav { margin-left: auto; display: flex; gap: 5px; }
+    .nav-button {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 17px;
+      color: #cad3e2;
+      background: transparent;
+      font-weight: 850;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .nav-button:hover, .nav-button.active { color: #fff; background: var(--blue); }
+
+    .ticket-button, .primary-button {
+      min-height: 44px;
+      border: 0;
+      border-radius: 14px;
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .ticket-button { background: linear-gradient(90deg, var(--red), #b71428); box-shadow: 0 0 26px rgba(232,29,53,.25); }
+    .primary-button { background: linear-gradient(90deg, var(--blue), var(--cyan)); box-shadow: 0 0 26px rgba(8,103,223,.25); }
+    .ticket-button:hover, .primary-button:hover { transform: translateY(-2px); }
+
+    .container { padding: 42px 0 60px; }
+    .section { display: none; }
+    .section.active { display: block; animation: appear .3s ease; }
+    @keyframes appear { from { opacity: 0; transform: translateY(10px); } }
+
+    .glass {
+      border: 1px solid var(--line);
+      border-radius: 29px;
+      background: linear-gradient(135deg, rgba(7,25,59,.56), rgba(2,6,23,.42));
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(11px);
+      -webkit-backdrop-filter: blur(11px);
+    }
+
+    .hero { display: grid; grid-template-columns: 1.55fr .8fr; gap: 24px; }
+    .hero-main { position: relative; min-height: 500px; padding: 40px; overflow: hidden; }
+    .hero-main::after { content: ""; position: absolute; right: -110px; top: -160px; width: 420px; height: 420px; border-radius: 50%; background: rgba(9,105,223,.22); filter: blur(55px); }
+    .hero-top { position: relative; z-index: 1; display: flex; justify-content: space-between; gap: 24px; }
+    .pill { display: inline-flex; padding: 8px 14px; border: 1px solid rgba(34,211,238,.35); border-radius: 999px; color: #a5f3fc; background: rgba(34,211,238,.1); font-size: 12px; font-weight: 950; letter-spacing: .12em; }
+    .match-title { margin: 22px 0 0; font-size: clamp(40px, 5vw, 66px); line-height: .98; letter-spacing: -.04em; text-shadow: 0 2px 18px #020817; }
+    .versus { display: block; margin: 14px 0; color: var(--cyan); font-size: 14px; letter-spacing: .34em; }
+    .hero-logo { width: 124px; height: 145px; object-fit: contain; filter: drop-shadow(0 0 25px rgba(32,145,255,.72)); }
+    .match-meta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 20px; color: #d8e0ed; font-size: 14px; }
+    .countdown { position: relative; z-index: 1; max-width: 750px; margin-top: 38px; display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+    .countdown div, .classic-count div { border: 1px solid rgba(255,255,255,.12); border-radius: 20px; text-align: center; background: rgba(255,255,255,.055); }
+    .countdown div { padding: 22px 8px; }
+    .countdown strong { display: block; font-size: 40px; }
+    .countdown small, .classic-count small { color: var(--muted); font-size: 10px; font-weight: 850; }
+    .hero-actions { position: relative; z-index: 1; display: flex; gap: 10px; margin-top: 28px; }
+
+    .classic-card { min-height: 500px; padding: 31px; display: flex; flex-direction: column; justify-content: space-between; }
+    .classic-label { color: #ff9bac; font-weight: 950; letter-spacing: .15em; font-size: 12px; }
+    .classic-card h2 { margin: 17px 0 9px; font-size: 31px; }
+    .classic-card p { color: var(--muted); }
+    .classic-count { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .classic-count div { padding: 22px 8px; background: rgba(232,29,53,.11); }
+    .classic-count strong { display: block; color: #ffd0d7; font-size: 30px; }
+    .progress-head { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+    .progress { height: 9px; margin-top: 9px; border-radius: 999px; background: rgba(255,255,255,.12); overflow: hidden; }
+    .progress span { display: block; width: 50%; height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); }
+
+    .stats { display: grid; grid-template-columns: repeat(8,minmax(0,1fr)); gap: 12px; margin-top: 23px; }
+    .stat { min-height: 145px; padding: 19px; }
+    .stat .emoji { font-size: 22px; }
+    .stat span { display: block; margin-top: 19px; color: #d4ddec; font-size: 12px; }
+    .stat strong { display: block; margin-top: 6px; font-size: 30px; }
+    .stat small { color: var(--muted); }
+
+    .panel { margin-top: 23px; padding: 28px; }
+    .panel:first-child { margin-top: 0; }
+    .panel-head { margin-bottom: 21px; display: flex; align-items: end; justify-content: space-between; gap: 15px; }
+    .panel-head h2 { margin: 0; font-size: 26px; }
+    .panel-head p { margin: 5px 0 0; color: var(--muted); }
+    .filters { display: grid; grid-template-columns: minmax(220px,1fr) 150px 180px; gap: 9px; }
+    .field { min-height: 46px; border: 1px solid var(--line); border-radius: 14px; padding: 0 14px; color: #fff; background: rgba(2,8,23,.78); outline: none; }
+    .field option { background: #020817; }
+
+    .match-list { max-height: 650px; overflow: auto; }
+    .match-row { width: 100%; margin-bottom: 8px; padding: 12px 15px; display: grid; grid-template-columns: 92px 1.3fr .6fr 90px 100px; gap: 14px; align-items: center; border: 1px solid rgba(255,255,255,.06); border-radius: 18px; color: #fff; background: rgba(255,255,255,.04); cursor: pointer; text-align: left; }
+    .match-row:hover { background: rgba(8,103,223,.14); border-color: rgba(34,211,238,.35); }
+    .date-box { padding: 9px; border-radius: 13px; background: rgba(255,255,255,.06); text-align: center; }
+    .date-box strong, .date-box small { display: block; }
+    .date-box small, .competition { color: var(--muted); font-size: 10px; }
+    .rival { font-weight: 900; }
+    .score { text-align: center; font-size: 20px; font-weight: 950; }
+    .badge { justify-self: end; padding: 7px 10px; border-radius: 999px; font-size: 10px; font-weight: 950; }
+    .win { color: #8ef0ae; background: rgba(34,197,94,.14); }
+    .draw { color: #e2e8f0; background: rgba(148,163,184,.14); }
+    .loss { color: #ffabb6; background: rgba(239,68,68,.14); }
+    .pending { color: #ffe18a; background: rgba(251,191,36,.14); }
+
+    .table-hint { display: none; margin: 0 0 12px; color: #a5f3fc; font-size: 12px; }
+    .table-wrap { width: 100%; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: rgba(34,211,238,.55) rgba(255,255,255,.07); }
+    .table-wrap::-webkit-scrollbar { height: 8px; }
+    .table-wrap::-webkit-scrollbar-track { border-radius: 999px; background: rgba(255,255,255,.07); }
+    .table-wrap::-webkit-scrollbar-thumb { border-radius: 999px; background: linear-gradient(90deg,var(--blue),var(--cyan)); }
+    table { width: 100%; min-width: 780px; border-collapse: separate; border-spacing: 0; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,.06); text-align: center; white-space: nowrap; }
+    th { color: #718096; font-size: 10px; text-transform: uppercase; }
+    th:nth-child(2), td:nth-child(2) { text-align: left; }
+    tr.u { background: rgba(8,103,223,.20); }
+    tr.u td { color: #cffafe; }
+
+    .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 23px; }
+    .chart { padding: 27px; }
+    .chart p { color: var(--muted); }
+    .chart canvas { width: 100%; height: 280px; display: block; }
+    .players { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-top: 23px; }
+    .player { padding: 22px; }
+    .player .emoji { font-size: 25px; }
+    .player small { display: block; margin-top: 20px; color: #718096; font-weight: 900; }
+    .player strong { display: block; margin-top: 7px; font-size: 18px; }
+    .player span { color: #a5f3fc; }
+
+    .modal { position: fixed; inset: 0; z-index: 200; display: none; place-items: center; padding: 18px; background: rgba(2,8,23,.85); backdrop-filter: blur(13px); }
+    .modal.show { display: grid; }
+    .modal-box { width: min(580px,100%); padding: 28px; }
+    .close { float: right; width: 38px; height: 38px; border: 0; border-radius: 50%; color: #fff; background: rgba(255,255,255,.1); cursor: pointer; }
+    .modal-comp, .modal-date { text-align: center; }
+    .modal-comp { clear: both; color: var(--cyan); font-size: 12px; font-weight: 950; }
+    .modal-date { margin-top: 7px; color: var(--muted); }
+    .modal-teams { margin-top: 28px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: center; text-align: center; font-weight: 950; }
+    .modal-score { padding: 13px 17px; border-radius: 15px; background: rgba(8,103,223,.2); font-size: 21px; }
+    .modal-info { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .modal-info div { padding: 16px; border-radius: 16px; background: rgba(255,255,255,.055); color: #cbd5e1; }
+    .modal-info strong { display: block; margin-bottom: 7px; color: var(--cyan); }
+    .modal-box .ticket-button { width: 100%; margin-top: 13px; }
+    .official-note { margin-top: 9px; color: var(--muted); font-size: 10px; text-align: center; }
+    .footer { margin-top: 30px; padding-top: 25px; border-top: 1px solid var(--line); color: #7e8ca5; font-size: 11px; line-height: 1.6; }
+
+    @media (max-width: 1150px) {
+      .header-ticket { display: none; }
+      .brand { margin-right: auto; }
+      .stats { grid-template-columns: repeat(4,minmax(0,1fr)); }
+
+      /* Barra de navegación móvil siempre visible */
+      .main-nav {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 150;
+        display: grid !important;
+        grid-template-columns: repeat(4,minmax(0,1fr));
+        gap: 6px;
+        margin: 0;
+        padding: 8px max(8px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));
+        border-top: 1px solid rgba(255,255,255,.16);
+        background: rgba(2,8,23,.95);
+        box-shadow: 0 -10px 35px rgba(0,0,0,.40);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+      }
+
+      .nav-button {
+        width: 100%;
+        min-width: 0;
+        padding: 11px 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 11px;
+        line-height: 1.2;
+        text-align: center;
+        white-space: normal;
+      }
+
+      .container { padding-bottom: calc(110px + env(safe-area-inset-bottom)); }
+    }
+
+    @media (max-width: 900px) {
+      .hero, .charts { grid-template-columns: 1fr; }
+      .players { grid-template-columns: repeat(2,1fr); }
+      .panel-head { align-items: stretch; flex-direction: column; }
+      .filters { grid-template-columns: 1fr; }
+      .match-row { grid-template-columns: 75px 1fr auto; }
+      .match-row .venue, .match-row .score { display: none; }
+    }
+
+    @media (max-width: 620px) {
+      .topbar-inner, .container { width: calc(100% - 20px); }
+      .brand strong { font-size: 13px; }
+      .brand small { display: none; }
+      .container { padding-top: 20px; }
+      .hero-main, .classic-card, .panel, .chart { padding: 20px; border-radius: 22px; }
+      .hero-logo { display: none; }
+      .match-title { font-size: 37px; }
+      .countdown { gap: 6px; }
+      .countdown div { padding: 14px 4px; }
+      .countdown strong { font-size: 25px; }
+      .hero-actions { flex-direction: column; }
+      .hero-actions .ticket-button, .hero-actions .primary-button { width: 100%; }
+      .stats { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .players { grid-template-columns: 1fr; }
+      .match-row { grid-template-columns: 68px 1fr auto; padding: 10px; gap: 9px; }
+      .modal-teams, .modal-info { grid-template-columns: 1fr; }
+      .table-hint { display: block; }
+
+      /* Tabla completa deslizable con columnas principales fijas */
+      table { min-width: 790px; }
+      th, td { padding: 11px 9px; }
+      th:first-child, td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 4;
+        min-width: 42px;
+        background: rgba(2,8,23,.98);
+      }
+      th:nth-child(2), td:nth-child(2) {
+        position: sticky;
+        left: 42px;
+        z-index: 3;
+        min-width: 165px;
+        background: rgba(2,8,23,.98);
+        box-shadow: 8px 0 14px rgba(0,0,0,.20);
+      }
+      tr.u td:first-child, tr.u td:nth-child(2) {
+        color: #cffafe;
+        background: rgba(7,69,151,.98);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <img class="logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Emblema_del_Club_Universidad_de_Chile.png/250px-Emblema_del_Club_Universidad_de_Chile.png" alt="Emblema de Universidad de Chile">
+      <div class="brand"><strong>U. DE CHILE · TRACKER 2026</strong><small>Partidos, posiciones y rendimiento</small></div>
+      <nav class="main-nav" aria-label="Navegación principal">
+        <button class="nav-button active" data-tab="resumen">Resumen</button>
+        <button class="nav-button" data-tab="partidos">Partidos</button>
+        <button class="nav-button" data-tab="posiciones">Posiciones</button>
+        <button class="nav-button" data-tab="estadisticas">Estadísticas</button>
+      </nav>
+      <a class="ticket-button header-ticket" href="https://udechile.ticketplus.cl/" target="_blank" rel="noopener noreferrer">🎟️ Comprar entradas</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="resumen" class="section active">
+      <div class="hero">
+        <article class="glass hero-main">
+          <div class="hero-top">
+            <div>
+              <span class="pill">✦ PRÓXIMO PARTIDO</span>
+              <h1 id="nextTeams" class="match-title"></h1>
+              <div class="match-meta"><span>📅 <b id="nextDate"></b></span><span>🕐 <b id="nextTime"></b></span><span>📍 <b id="nextVenue"></b></span></div>
+            </div>
+            <img class="hero-logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Emblema_del_Club_Universidad_de_Chile.png/250px-Emblema_del_Club_Universidad_de_Chile.png" alt="Emblema de Universidad de Chile">
+          </div>
+          <div class="countdown"><div><strong id="days">00</strong><small>DÍAS</small></div><div><strong id="hours">00</strong><small>HORAS</small></div><div><strong id="minutes">00</strong><small>MIN</small></div><div><strong id="seconds">00</strong><small>SEG</small></div></div>
+          <div class="hero-actions"><button class="primary-button" id="detailButton">Ver ficha del partido</button><a class="ticket-button" href="https://udechile.ticketplus.cl/" target="_blank" rel="noopener noreferrer">🎟️ Comprar entrada</a></div>
+        </article>
+        <aside class="glass classic-card">
+          <div><span class="classic-label">SUPERCLÁSICO</span><h2>Universidad de Chile vs Colo Colo</h2><p>23 de agosto de 2026 · 15:00 · Local</p></div>
+          <div class="classic-count"><div><strong id="scDays">00</strong><small>DÍAS</small></div><div><strong id="scHours">00</strong><small>HORAS</small></div><div><strong id="scMinutes">00</strong><small>MIN</small></div></div>
+          <div><div class="progress-head"><span>Temporada regular</span><span>15 / 30 PJ</span></div><div class="progress"><span></span></div></div>
+        </aside>
+      </div>
+      <div id="summaryStats" class="stats"></div>
+      <article class="glass panel"><div class="panel-head"><div><h2>Últimos y próximos partidos</h2><p>Selecciona un partido para ver el detalle.</p></div><button class="primary-button" onclick="switchTab('partidos')">Ver calendario completo</button></div><div id="summaryMatches" class="match-list"></div></article>
+    </section>
+
+    <section id="partidos" class="section">
+      <article class="glass panel"><div class="panel-head"><div><h2>Calendario interactivo</h2><p id="matchCount"></p></div><div class="filters"><input id="search" class="field" placeholder="Buscar rival o competencia"><select id="venueFilter" class="field"><option>Todos</option><option>Local</option><option>Visita</option></select><select id="competitionFilter" class="field"><option>Todas</option><option>Liga de Primera</option><option>Copa Chile</option></select></div></div><div id="matchList" class="match-list"></div></article>
+    </section>
+
+    <section id="posiciones" class="section">
+      <article class="glass panel">
+        <div class="panel-head"><div><h2>Tabla de posiciones</h2><p>Liga de Primera 2026 · Primera rueda</p></div><span class="pill">LA U · 3.º</span></div>
+        <p class="table-hint">Desliza la tabla hacia la izquierda para ver PJ, G, E, P, GF, GC, DG y PTS →</p>
+        <div class="table-wrap" role="region" aria-label="Tabla de posiciones desplazable" tabindex="0">
+          <table><thead><tr><th>#</th><th>Equipo</th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>GF</th><th>GC</th><th>DG</th><th>PTS</th></tr></thead><tbody id="standingsBody"></tbody></table>
+        </div>
+      </article>
+    </section>
+
+    <section id="estadisticas" class="section">
+      <div id="fullStats" class="stats"></div>
+      <div class="charts"><article class="glass chart"><h2>Evolución de puntos</h2><p>Acumulado por fecha de Liga.</p><canvas id="pointsChart"></canvas></article><article class="glass chart"><h2>Goles por partido</h2><p>Primera rueda de Liga.</p><canvas id="goalsChart"></canvas></article></div>
+      <div id="players" class="players"></div>
+    </section>
+
+    <footer class="footer">Panel demostrativo no oficial. Este sitio no vende entradas ni procesa pagos; los botones redirigen al portal oficial externo. Fechas, horarios, disponibilidad y precios deben verificarse en los canales oficiales.</footer>
+  </main>
+
+  <div id="modal" class="modal"><div class="glass modal-box"><button id="closeModal" class="close">✕</button><div id="modalCompetition" class="modal-comp"></div><div id="modalDate" class="modal-date"></div><div class="modal-teams"><div id="modalHome"></div><div id="modalScore" class="modal-score"></div><div id="modalAway"></div></div><div class="modal-info"><div><strong>Estadio</strong><span id="modalStadium"></span></div><div><strong>Estado</strong><span id="modalStatus"></span></div></div><a class="ticket-button" href="https://udechile.ticketplus.cl/" target="_blank" rel="noopener noreferrer">🎟️ Comprar entrada en sitio oficial</a><div class="official-note">La venta y disponibilidad dependen del organizador del partido.</div></div></div>
+
+  <script>
+    "use strict";
+    const U = "Universidad de Chile";
+    const make = competition => p => ({ id:p[0], date:p[1], rival:p[2], venue:p[3], status:p[4], gf:p[5], ga:p[6], tbc:!!p[7], stadium:p[8]||"", competition });
+
+    const league = [
+      [1,"2026-01-30T20:00:00-03:00","Audax Italiano","Local","Jugado",0,0],[2,"2026-02-08T12:00:00-03:00","Huachipato","Visita","Jugado",1,2],[3,"2026-02-13T20:30:00-03:00","Palestino","Visita","Jugado",0,0],[4,"2026-02-22T20:30:00-03:00","Deportes Limache","Local","Jugado",2,2],[5,"2026-03-01T18:00:00-03:00","Colo Colo","Visita","Jugado",1,0],[6,"2026-03-09T20:00:00-03:00","U. de Concepción","Local","Jugado",1,1],[7,"2026-03-14T18:00:00-03:00","Coquimbo Unido","Visita","Jugado",1,0],[8,"2026-04-05T18:00:00-04:00","La Serena","Local","Jugado",4,0],[9,"2026-04-12T17:30:00-04:00","Ñublense","Visita","Jugado",0,1],[10,"2026-04-18T17:30:00-04:00","Everton","Visita","Jugado",0,0],[11,"2026-04-25T18:00:00-04:00","U. Católica","Local","Jugado",1,0],[12,"2026-05-17T15:00:00-04:00","Cobresal","Visita","Jugado",0,1],[13,"2026-05-30T17:30:00-04:00","Deportes Concepción","Local","Jugado",2,1],[14,"2026-06-14T15:00:00-04:00","Unión La Calera","Visita","Jugado",2,2],[15,"2026-06-18T20:00:00-04:00","O'Higgins","Local","Jugado",2,0],[16,"2026-07-26T17:30:00-04:00","Audax Italiano","Visita","Pendiente",null,null,false,"Bicentenario de La Florida"],[17,"2026-08-02T17:30:00-04:00","Huachipato","Local","Pendiente"],[18,"2026-08-09T20:00:00-04:00","Palestino","Local","Pendiente"],[19,"2026-08-15T17:30:00-04:00","Deportes Limache","Visita","Pendiente"],[20,"2026-08-23T15:00:00-04:00","Colo Colo","Local","Pendiente"],[21,"2026-08-30T12:00:00-04:00","U. de Concepción","Visita","Por confirmar",null,null,true],[22,"2026-09-06T12:00:00-04:00","Coquimbo Unido","Local","Por confirmar",null,null,true],[23,"2026-09-13T12:00:00-04:00","La Serena","Visita","Por confirmar",null,null,true],[24,"2026-10-11T12:00:00-03:00","Ñublense","Local","Por confirmar",null,null,true],[25,"2026-10-25T12:00:00-03:00","Everton","Local","Por confirmar",null,null,true],[26,"2026-11-01T12:00:00-03:00","U. Católica","Visita","Por confirmar",null,null,true],[27,"2026-11-08T12:00:00-03:00","Cobresal","Local","Por confirmar",null,null,true],[28,"2026-11-22T12:00:00-03:00","O'Higgins","Visita","Por confirmar",null,null,true],[29,"2026-11-29T12:00:00-03:00","Deportes Concepción","Visita","Por confirmar",null,null,true],[30,"2026-12-06T12:00:00-03:00","Unión La Calera","Local","Por confirmar",null,null,true]
+    ].map(make("Liga de Primera"));
+
+    const cup = [[31,"2026-06-21T15:00:00-04:00","Santiago Wanderers","Local","Jugado",4,1],[32,"2026-06-24T18:00:00-04:00","Unión La Calera","Visita","Jugado",3,3],[33,"2026-06-28T18:00:00-04:00","Unión San Felipe","Local","Jugado",2,0],[34,"2026-07-01T18:00:00-04:00","Unión La Calera","Local","Jugado",0,1],[35,"2026-07-05T15:00:00-04:00","Santiago Wanderers","Visita","Jugado",3,2],[36,"2026-08-05T22:00:00-04:00","Unión San Felipe","Visita","Pendiente"]].map(make("Copa Chile"));
+    const matches = [...league,...cup].sort((a,b)=>new Date(a.date)-new Date(b.date));
+
+    const standings = [[1,"Colo Colo",15,12,0,3,29,12,17,36],[2,"U. Católica",15,8,2,5,35,20,15,26],[3,U,15,6,6,3,17,10,7,24],[4,"Coquimbo Unido",15,7,3,5,22,18,4,24],[5,"Palestino",15,7,3,5,23,21,2,24],[6,"Huachipato",15,7,2,6,23,22,1,23],[7,"Everton",15,6,4,5,19,15,4,22],[8,"Ñublense",15,5,7,3,18,19,-1,22],[9,"Deportes Limache",15,6,3,6,30,23,7,21],[10,"O'Higgins",15,6,2,7,19,22,-3,20],[11,"U. de Concepción",15,5,4,6,13,26,-13,19],[12,"La Serena",15,4,6,5,21,25,-4,18],[13,"Audax Italiano",15,4,4,7,18,21,-3,16],[14,"Deportes Concepción",15,4,2,9,14,23,-9,14],[15,"Cobresal",15,4,1,10,19,29,-10,13],[16,"Unión La Calera",15,3,3,9,14,28,-14,12]];
+    const stats = [["⚽","Goles a favor","17","Liga · 15 PJ"],["🛡️","Goles en contra","10","0.67 por partido"],["📈","Diferencia","+7","Primera rueda"],["🏆","Puntos","24","3.º lugar"],["✅","Victorias","6","40%"],["🤝","Empates","6","40%"],["❌","Derrotas","3","20%"],["🎯","Rendimiento","53.3%","24 de 45 puntos"]];
+    const featured = [["⚽","Goleador 2026","Eduardo Vargas","5 goles"],["✨","Aporte ofensivo","Javier Altamirano","2 goles"],["🚀","Aporte ofensivo","Maximiliano Guerrero","2 goles"],["🧤","Vallas invictas","Gabriel Castellón","8"]];
+
+    const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+    let nextMatch;
+    const dateText = (d,short=false) => new Intl.DateTimeFormat("es-CL", short ? {day:"2-digit",month:"short"} : {weekday:"short",day:"2-digit",month:"short",year:"numeric"}).format(new Date(d)).replaceAll(".","");
+    const timeText = m => m.tbc ? "Hora por confirmar" : new Intl.DateTimeFormat("es-CL",{hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(m.date));
+    const teams = m => m.venue === "Local" ? [U,m.rival] : [m.rival,U];
+
+    function resultClass(m){ return m.status!=="Jugado" ? "pending" : m.gf>m.ga ? "win" : m.gf===m.ga ? "draw" : "loss"; }
+    function resultText(m){ return m.status!=="Jugado" ? m.status : m.gf>m.ga ? "Ganado" : m.gf===m.ga ? "Empatado" : "Perdido"; }
+    function matchCard(m){ return `<button class="match-row" onclick="openMatch(${m.id})"><div class="date-box"><strong>${dateText(m.date,true)}</strong><small>${timeText(m)}</small></div><div><div class="rival">${m.rival}</div><div class="competition">${m.competition}</div></div><div class="venue">${m.venue==="Local"?"🏠":"✈️"} ${m.venue}</div><div class="score">${m.status==="Jugado"?`${m.gf} — ${m.ga}`:"—"}</div><span class="badge ${resultClass(m)}">${resultText(m)}</span></button>`; }
+    function renderStats(target){ $(target).innerHTML = stats.map(s=>`<article class="glass stat"><div class="emoji">${s[0]}</div><span>${s[1]}</span><strong>${s[2]}</strong><small>${s[3]}</small></article>`).join(""); }
+    function renderMatches(){ const q=$("#search").value.toLowerCase(),v=$("#venueFilter").value,c=$("#competitionFilter").value; const filtered=matches.filter(m=>(!q||m.rival.toLowerCase().includes(q)||m.competition.toLowerCase().includes(q))&&(v==="Todos"||m.venue===v)&&(c==="Todas"||m.competition===c)); $("#matchCount").textContent=`${filtered.length} partidos visibles`; $("#matchList").innerHTML=filtered.map(matchCard).join(""); }
+    function switchTab(id){ $$(".section").forEach(x=>x.classList.toggle("active",x.id===id)); $$(".nav-button").forEach(x=>x.classList.toggle("active",x.dataset.tab===id)); if(id==="estadisticas") setTimeout(drawCharts,30); scrollTo({top:0,behavior:"smooth"}); }
+    function openMatch(id){ const m=matches.find(x=>x.id===id),t=teams(m); $("#modalCompetition").textContent=m.competition; $("#modalDate").textContent=`${dateText(m.date)} · ${timeText(m)}`; $("#modalHome").textContent=t[0]; $("#modalAway").textContent=t[1]; $("#modalScore").textContent=m.status==="Jugado"?(m.venue==="Local"?`${m.gf} — ${m.ga}`:`${m.ga} — ${m.gf}`):"VS"; $("#modalStadium").textContent=m.stadium||(m.venue==="Local"?"Estadio por confirmar":"Estadio del rival"); $("#modalStatus").textContent=m.status; $("#modal").classList.add("show"); }
+    function countdown(target){ const n=Math.max(0,new Date(target)-new Date()); return {d:Math.floor(n/864e5),h:Math.floor(n/36e5)%24,m:Math.floor(n/6e4)%60,s:Math.floor(n/1e3)%60}; }
+    function tick(){ const c=countdown(nextMatch.date); [["days",c.d],["hours",c.h],["minutes",c.m],["seconds",c.s]].forEach(([id,v])=>$("#"+id).textContent=String(v).padStart(2,"0")); const sc=countdown("2026-08-23T15:00:00-04:00"); $("#scDays").textContent=String(sc.d).padStart(2,"0"); $("#scHours").textContent=String(sc.h).padStart(2,"0"); $("#scMinutes").textContent=String(sc.m).padStart(2,"0"); }
+    function fit(canvas){ const r=canvas.getBoundingClientRect(),d=devicePixelRatio||1; canvas.width=r.width*d; canvas.height=280*d; const x=canvas.getContext("2d"); x.setTransform(d,0,0,d,0,0); return {x,w:r.width,h:280}; }
+    function grid(x,w,h,max){ x.strokeStyle="rgba(255,255,255,.08)"; x.fillStyle="#718096"; x.font="10px system-ui"; for(let i=0;i<5;i++){ const y=20+(h-55)*i/4; x.beginPath(); x.moveTo(35,y); x.lineTo(w-10,y); x.stroke(); x.fillText(Math.round(max*(4-i)/4),8,y+3); } }
+    function drawCharts(){ const played=league.filter(m=>m.status==="Jugado"); let total=0; const pts=played.map(m=>total+=m.gf>m.ga?3:m.gf===m.ga?1:0); const goals=played.map(m=>m.gf); drawLine($("#pointsChart"),pts,24); drawBars($("#goalsChart"),goals,4); }
+    function drawLine(c,a,max){ const {x,w,h}=fit(c),l=35,r=w-12,t=20,b=h-35,step=(r-l)/(a.length-1); grid(x,w,h,max); x.strokeStyle="#22d3ee"; x.lineWidth=3; x.beginPath(); a.forEach((v,i)=>{ const px=l+i*step,py=b-v/max*(b-t); i?x.lineTo(px,py):x.moveTo(px,py); }); x.stroke(); }
+    function drawBars(c,a,max){ const {x,w,h}=fit(c),l=35,r=w-12,t=20,b=h-35,slot=(r-l)/a.length; grid(x,w,h,max); a.forEach((v,i)=>{ const px=l+i*slot+slot*.2,bh=v/max*(b-t); x.fillStyle="#0867df"; x.fillRect(px,b-bh,slot*.6,bh); }); }
+
+    function init(){
+      nextMatch=matches.find(m=>new Date(m.date)>new Date()&&m.status!=="Jugado")||matches[matches.length-1];
+      const t=teams(nextMatch); $("#nextTeams").innerHTML=`${t[0]}<span class="versus">VS</span>${t[1]}`; $("#nextDate").textContent=dateText(nextMatch.date); $("#nextTime").textContent=timeText(nextMatch); $("#nextVenue").textContent=nextMatch.venue; $("#detailButton").onclick=()=>openMatch(nextMatch.id);
+      renderStats("#summaryStats"); renderStats("#fullStats");
+      const now=new Date(),recent=matches.filter(m=>m.status==="Jugado").slice(-4),future=matches.filter(m=>new Date(m.date)>=now&&m.status!=="Jugado").slice(0,4); $("#summaryMatches").innerHTML=[...recent,...future].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(matchCard).join("");
+      renderMatches();
+      $("#standingsBody").innerHTML=standings.map(r=>`<tr class="${r[1]===U?"u":""}">${r.map((v,i)=>`<td>${i===8&&v>0?"+":""}${v}</td>`).join("")}</tr>`).join("");
+      $("#players").innerHTML=featured.map(p=>`<article class="glass player"><div class="emoji">${p[0]}</div><small>${p[1]}</small><strong>${p[2]}</strong><span>${p[3]}</span></article>`).join("");
+      $$(".nav-button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));
+      ["#search","#venueFilter","#competitionFilter"].forEach(s=>$(s).addEventListener(s==="#search"?"input":"change",renderMatches));
+      $("#closeModal").onclick=()=>$("#modal").classList.remove("show"); $("#modal").onclick=e=>{if(e.target.id==="modal")$("#modal").classList.remove("show");};
+      tick(); setInterval(tick,1000); addEventListener("resize",()=>{$("#estadisticas").classList.contains("active")&&drawCharts();});
+    }
+    init();
+  </script>
+</body>
+</html>
